@@ -54,7 +54,10 @@ def format_number(v: float) -> str:
     return f"{v:,.0f}"
 
 
-def safe_pct(numerator, denominator) -> float:
+def safe_pct(numerator, denominator):
+    """Works with both scalars and pandas Series."""
+    if isinstance(denominator, pd.Series):
+        return (numerator / denominator * 100).where(denominator > 0, 0.0)
     return (numerator / denominator * 100) if denominator > 0 else 0.0
 
 
