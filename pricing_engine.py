@@ -23,6 +23,8 @@ st.set_page_config(
 )
 
 # ─────────────────────────── THEME: WHITE + RED ───────────────────────────
+# Base colors are set in .streamlit/config.toml
+# CSS below only adds accents — does NOT override text colors globally.
 
 BRAND_RED = "#E8192C"
 BRAND_RED_LIGHT = "#FF4D5E"
@@ -31,160 +33,39 @@ BRAND_RED_DARK = "#B71525"
 
 st.markdown(f"""
 <style>
-    /* ══════ GLOBAL ══════ */
-    .stApp {{
-        background-color: #FFFFFF;
-        color: #222222;
-    }}
-    header[data-testid="stHeader"] {{
-        background-color: {BRAND_RED};
-    }}
-
-    /* ══════ SIDEBAR — nền trắng, accent đỏ ══════ */
+    /* ── Sidebar accent stripe ── */
     section[data-testid="stSidebar"] {{
-        background: linear-gradient(180deg, #FFFFFF 0%, {BRAND_RED_BG} 100%);
-        border-right: 3px solid {BRAND_RED};
-    }}
-    section[data-testid="stSidebar"] h1,
-    section[data-testid="stSidebar"] h2,
-    section[data-testid="stSidebar"] h3,
-    section[data-testid="stSidebar"] h4 {{
-        color: {BRAND_RED} !important;
-        font-weight: 700 !important;
-    }}
-    section[data-testid="stSidebar"] label,
-    section[data-testid="stSidebar"] .stMarkdown p,
-    section[data-testid="stSidebar"] .stMarkdown span,
-    section[data-testid="stSidebar"] .stCaption {{
-        color: #333333 !important;
-    }}
-    section[data-testid="stSidebar"] .stNumberInput input,
-    section[data-testid="stSidebar"] .stTextInput input {{
-        background-color: #FFFFFF !important;
-        color: #222222 !important;
-        border: 1.5px solid #DDDDDD !important;
-        border-radius: 6px !important;
-    }}
-    section[data-testid="stSidebar"] .stNumberInput input:focus,
-    section[data-testid="stSidebar"] .stTextInput input:focus {{
-        border-color: {BRAND_RED} !important;
-        box-shadow: 0 0 0 2px {BRAND_RED_BG} !important;
-    }}
-    section[data-testid="stSidebar"] .stSelectbox div[data-baseweb="select"] {{
-        background-color: #FFFFFF !important;
-        color: #222222 !important;
-        border-color: #DDDDDD !important;
-    }}
-    section[data-testid="stSidebar"] .stSelectbox div[data-baseweb="select"] * {{
-        color: #222222 !important;
-    }}
-    section[data-testid="stSidebar"] .stCheckbox label span {{
-        color: #333333 !important;
-    }}
-    section[data-testid="stSidebar"] .stSlider label {{
-        color: #333333 !important;
-    }}
-    section[data-testid="stSidebar"] hr {{
-        border-color: {BRAND_RED_LIGHT} !important;
-        opacity: 0.4;
-    }}
-    /* Sidebar expanders */
-    section[data-testid="stSidebar"] details {{
-        background-color: #FFFFFF !important;
-        border: 1.5px solid #EEEEEE !important;
-        border-radius: 8px !important;
-        margin-bottom: 6px;
-    }}
-    section[data-testid="stSidebar"] details[open] {{
-        border-color: {BRAND_RED} !important;
-    }}
-    section[data-testid="stSidebar"] details summary {{
-        color: {BRAND_RED_DARK} !important;
-        font-weight: 600;
+        border-right: 4px solid {BRAND_RED};
     }}
 
-    /* ══════ METRIC CARDS ══════ */
+    /* ── Metric cards ── */
     div[data-testid="stMetric"] {{
-        background-color: {BRAND_RED_BG};
-        border-left: 4px solid {BRAND_RED};
-        padding: 12px 16px;
-        border-radius: 8px;
-    }}
-    div[data-testid="stMetric"] label {{
-        color: {BRAND_RED_DARK} !important;
-        font-weight: 600 !important;
-    }}
-    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {{
-        color: {BRAND_RED} !important;
-        font-weight: 700 !important;
-    }}
-    div[data-testid="stMetric"] div[data-testid="stMetricDelta"] {{
-        color: #555555 !important;
+        background: linear-gradient(135deg, {BRAND_RED_BG} 0%, #FFFFFF 100%);
+        border-left: 5px solid {BRAND_RED};
+        border-radius: 10px;
+        padding: 14px 18px;
+        box-shadow: 0 2px 8px rgba(232,25,44,0.08);
     }}
 
-    /* ══════ TABS ══════ */
-    button[data-baseweb="tab"] {{
-        color: #666666 !important;
-        font-weight: 500 !important;
-    }}
+    /* ── Active tab ── */
     button[data-baseweb="tab"][aria-selected="true"] {{
-        color: {BRAND_RED} !important;
         border-bottom: 3px solid {BRAND_RED} !important;
-        font-weight: 700 !important;
     }}
 
-    /* ══════ EXPANDERS (main area) ══════ */
-    .main details summary {{
-        color: {BRAND_RED_DARK} !important;
-        font-weight: 600;
-    }}
-    .main details[open] {{
-        border-color: {BRAND_RED} !important;
-    }}
-
-    /* ══════ BUTTONS ══════ */
-    .stButton > button {{
+    /* ── Primary buttons ── */
+    .stButton > button,
+    .stDownloadButton > button {{
         background-color: {BRAND_RED} !important;
         color: #FFFFFF !important;
         border: none !important;
-        border-radius: 6px;
-        font-weight: 600;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        transition: all 0.2s;
     }}
-    .stButton > button:hover {{
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {{
         background-color: {BRAND_RED_DARK} !important;
-    }}
-
-    /* ══════ HEADINGS ══════ */
-    .main h1, .main h2 {{
-        color: {BRAND_RED} !important;
-    }}
-    .main h3 {{
-        color: {BRAND_RED_DARK} !important;
-    }}
-
-    /* ══════ BODY TEXT ══════ */
-    .main .stMarkdown p,
-    .main .stMarkdown li,
-    .main .stMarkdown span {{
-        color: #333333 !important;
-    }}
-
-    /* ══════ DATAFRAME ══════ */
-    .stDataFrame thead tr th {{
-        background-color: {BRAND_RED} !important;
-        color: #FFFFFF !important;
-    }}
-
-    /* ══════ INPUTS (main area) ══════ */
-    .main .stNumberInput input,
-    .main .stTextInput input {{
-        border: 1.5px solid #DDDDDD !important;
-        color: #222222 !important;
-    }}
-    .main .stNumberInput input:focus,
-    .main .stTextInput input:focus {{
-        border-color: {BRAND_RED} !important;
-        box-shadow: 0 0 0 2px {BRAND_RED_BG} !important;
+        box-shadow: 0 4px 12px rgba(232,25,44,0.3) !important;
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -603,13 +484,18 @@ def render_staff_detail_table(calc: PricingCalculator, selling_price: float):
 
 def main():
     st.markdown(f"""
-    <div style="text-align:center; padding: 10px 0 5px 0;">
-        <span style="font-size:2.5em; font-weight:800; color:{BRAND_RED};">🔥 PRICING ENGINE</span>
-        <br>
-        <span style="font-size:1.1em; color:{BRAND_RED_DARK};">
-        Phân tích giá & lãi lỗ · Gia dụng (Bếp gas, Bếp từ) · Livestream · Page · Showroom</span>
+    <div style="background: linear-gradient(135deg, {BRAND_RED} 0%, {BRAND_RED_DARK} 100%);
+                padding: 24px 32px; border-radius: 12px; margin-bottom: 24px;
+                box-shadow: 0 4px 20px rgba(232,25,44,0.2);">
+        <div style="text-align:center;">
+            <span style="font-size:2.2em; font-weight:800; color:#FFFFFF; letter-spacing:2px;">
+                🔥 PRICING ENGINE</span>
+            <br>
+            <span style="font-size:1em; color:rgba(255,255,255,0.85); letter-spacing:1px;">
+                Phân tích giá &amp; lãi lỗ &nbsp;·&nbsp; Gia dụng (Bếp gas, Bếp từ)
+                &nbsp;·&nbsp; Livestream · Page · Showroom</span>
+        </div>
     </div>
-    <hr style="border: 2px solid {BRAND_RED}; margin: 10px 0 20px 0;">
     """, unsafe_allow_html=True)
 
     # ══════════════════════ SIDEBAR ══════════════════════
@@ -800,7 +686,7 @@ def main():
             profit_20 = calc.pnl_at_price(price_20)["LỢI NHUẬN RÒNG"]
             st.metric("💵 LN ròng / đơn @20%", format_vnd(profit_20))
 
-    st.markdown(f'<hr style="border: 1px solid {BRAND_RED};">', unsafe_allow_html=True)
+    st.markdown(f'<div style="height:3px; background:linear-gradient(90deg, {BRAND_RED}, {BRAND_RED_LIGHT}, transparent); border-radius:2px; margin:20px 0;"></div>', unsafe_allow_html=True)
 
     # ══════════════════════ TABS ══════════════════════
 
@@ -822,7 +708,7 @@ def main():
         with c_c:
             render_pnl_column(calc.pnl_at_price(price_20), "🟢 Biên lợi nhuận 20%")
 
-        st.markdown(f'<hr style="border: 1px solid {BRAND_RED_LIGHT};">', unsafe_allow_html=True)
+        st.markdown("---")
         st.subheader("🎯 Nhập giá bán tùy chỉnh")
         custom_price = st.number_input(
             "Giá bán tùy chỉnh (₫)", min_value=0,
@@ -1024,10 +910,13 @@ def main():
 
     # ── Footer ──
     st.markdown(f"""
-    <hr style="border: 2px solid {BRAND_RED};">
-    <div style='text-align:center; color:{BRAND_RED_DARK}; font-size:0.85em; padding:10px 0;'>
-    🔥 Pricing Engine v3.0 · {datetime.now().strftime('%d/%m/%Y %H:%M')} ·
-    Dành cho nội bộ Công ty Gia dụng
+    <div style="background: linear-gradient(135deg, {BRAND_RED} 0%, {BRAND_RED_DARK} 100%);
+                padding: 14px 24px; border-radius: 10px; margin-top: 32px;
+                text-align:center;">
+        <span style="color:#FFFFFF; font-size:0.85em;">
+            🔥 Pricing Engine v3.0 &nbsp;·&nbsp; {datetime.now().strftime('%d/%m/%Y %H:%M')}
+            &nbsp;·&nbsp; Dành cho nội bộ Công ty Gia dụng
+        </span>
     </div>
     """, unsafe_allow_html=True)
 
