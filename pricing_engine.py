@@ -31,36 +31,79 @@ BRAND_RED_DARK = "#B71525"
 
 st.markdown(f"""
 <style>
-    /* ── Global ── */
+    /* ══════ GLOBAL ══════ */
     .stApp {{
         background-color: #FFFFFF;
+        color: #222222;
     }}
     header[data-testid="stHeader"] {{
         background-color: {BRAND_RED};
     }}
 
-    /* ── Sidebar ── */
+    /* ══════ SIDEBAR — nền trắng, accent đỏ ══════ */
     section[data-testid="stSidebar"] {{
-        background-color: {BRAND_RED};
+        background: linear-gradient(180deg, #FFFFFF 0%, {BRAND_RED_BG} 100%);
+        border-right: 3px solid {BRAND_RED};
     }}
-    section[data-testid="stSidebar"] * {{
-        color: #FFFFFF !important;
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] h4 {{
+        color: {BRAND_RED} !important;
+        font-weight: 700 !important;
+    }}
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] .stMarkdown p,
+    section[data-testid="stSidebar"] .stMarkdown span,
+    section[data-testid="stSidebar"] .stCaption {{
+        color: #333333 !important;
     }}
     section[data-testid="stSidebar"] .stNumberInput input,
-    section[data-testid="stSidebar"] .stTextInput input,
-    section[data-testid="stSidebar"] .stSelectbox div[data-baseweb="select"] {{
-        background-color: rgba(255,255,255,0.15) !important;
-        color: #FFFFFF !important;
-        border-color: rgba(255,255,255,0.3) !important;
-    }}
-    section[data-testid="stSidebar"] .stSlider div[data-baseweb="slider"] div {{
+    section[data-testid="stSidebar"] .stTextInput input {{
         background-color: #FFFFFF !important;
+        color: #222222 !important;
+        border: 1.5px solid #DDDDDD !important;
+        border-radius: 6px !important;
+    }}
+    section[data-testid="stSidebar"] .stNumberInput input:focus,
+    section[data-testid="stSidebar"] .stTextInput input:focus {{
+        border-color: {BRAND_RED} !important;
+        box-shadow: 0 0 0 2px {BRAND_RED_BG} !important;
+    }}
+    section[data-testid="stSidebar"] .stSelectbox div[data-baseweb="select"] {{
+        background-color: #FFFFFF !important;
+        color: #222222 !important;
+        border-color: #DDDDDD !important;
+    }}
+    section[data-testid="stSidebar"] .stSelectbox div[data-baseweb="select"] * {{
+        color: #222222 !important;
+    }}
+    section[data-testid="stSidebar"] .stCheckbox label span {{
+        color: #333333 !important;
+    }}
+    section[data-testid="stSidebar"] .stSlider label {{
+        color: #333333 !important;
     }}
     section[data-testid="stSidebar"] hr {{
-        border-color: rgba(255,255,255,0.25) !important;
+        border-color: {BRAND_RED_LIGHT} !important;
+        opacity: 0.4;
+    }}
+    /* Sidebar expanders */
+    section[data-testid="stSidebar"] details {{
+        background-color: #FFFFFF !important;
+        border: 1.5px solid #EEEEEE !important;
+        border-radius: 8px !important;
+        margin-bottom: 6px;
+    }}
+    section[data-testid="stSidebar"] details[open] {{
+        border-color: {BRAND_RED} !important;
+    }}
+    section[data-testid="stSidebar"] details summary {{
+        color: {BRAND_RED_DARK} !important;
+        font-weight: 600;
     }}
 
-    /* ── Metric cards ── */
+    /* ══════ METRIC CARDS ══════ */
     div[data-testid="stMetric"] {{
         background-color: {BRAND_RED_BG};
         border-left: 4px solid {BRAND_RED};
@@ -69,53 +112,79 @@ st.markdown(f"""
     }}
     div[data-testid="stMetric"] label {{
         color: {BRAND_RED_DARK} !important;
+        font-weight: 600 !important;
     }}
     div[data-testid="stMetric"] div[data-testid="stMetricValue"] {{
         color: {BRAND_RED} !important;
         font-weight: 700 !important;
     }}
+    div[data-testid="stMetric"] div[data-testid="stMetricDelta"] {{
+        color: #555555 !important;
+    }}
 
-    /* ── Tabs ── */
+    /* ══════ TABS ══════ */
     button[data-baseweb="tab"] {{
-        color: #666 !important;
+        color: #666666 !important;
+        font-weight: 500 !important;
     }}
     button[data-baseweb="tab"][aria-selected="true"] {{
         color: {BRAND_RED} !important;
-        border-bottom-color: {BRAND_RED} !important;
+        border-bottom: 3px solid {BRAND_RED} !important;
+        font-weight: 700 !important;
     }}
 
-    /* ── Expanders ── */
-    details summary {{
+    /* ══════ EXPANDERS (main area) ══════ */
+    .main details summary {{
         color: {BRAND_RED_DARK} !important;
         font-weight: 600;
     }}
-    details[open] {{
+    .main details[open] {{
         border-color: {BRAND_RED} !important;
     }}
 
-    /* ── Buttons ── */
+    /* ══════ BUTTONS ══════ */
     .stButton > button {{
         background-color: {BRAND_RED} !important;
         color: #FFFFFF !important;
         border: none !important;
         border-radius: 6px;
+        font-weight: 600;
     }}
     .stButton > button:hover {{
         background-color: {BRAND_RED_DARK} !important;
     }}
 
-    /* ── Title accent ── */
-    h1, h2 {{
+    /* ══════ HEADINGS ══════ */
+    .main h1, .main h2 {{
         color: {BRAND_RED} !important;
     }}
-    h3 {{
+    .main h3 {{
         color: {BRAND_RED_DARK} !important;
     }}
 
-    /* ── Dataframe header ── */
+    /* ══════ BODY TEXT ══════ */
+    .main .stMarkdown p,
+    .main .stMarkdown li,
+    .main .stMarkdown span {{
+        color: #333333 !important;
+    }}
+
+    /* ══════ DATAFRAME ══════ */
     .stDataFrame thead tr th {{
         background-color: {BRAND_RED} !important;
         color: #FFFFFF !important;
+    }}
+
+    /* ══════ INPUTS (main area) ══════ */
+    .main .stNumberInput input,
+    .main .stTextInput input {{
+        border: 1.5px solid #DDDDDD !important;
+        color: #222222 !important;
+    }}
+    .main .stNumberInput input:focus,
+    .main .stTextInput input:focus {{
+        border-color: {BRAND_RED} !important;
+        box-shadow: 0 0 0 2px {BRAND_RED_BG} !important;
     }}
 </style>
 """, unsafe_allow_html=True)
