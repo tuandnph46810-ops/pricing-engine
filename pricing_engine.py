@@ -1,9 +1,8 @@
 """
 ╔══════════════════════════════════════════════════════════════════════╗
-║  PRICING ENGINE v3.0 — Unit Economics Calculator                   ║
-║  Dành cho ngành Gia dụng (Bếp gas, Bếp từ)                        ║
-║  Bán hàng trực tiếp: Livestream, Page, Showroom                   ║
-║  Chi phí nhân sự tách biệt từng người                             ║
+║  PRICING ENGINE v3.2 PRO — Unit Economics & Profit Architecture     ║
+║  Dành cho Ban Điều Hành (CEO) Công ty Gia dụng (Bếp gas, Bếp từ)     ║
+║  Thiết kế: White & Vibrant Red Theme (Độ tương phản cao, sắc nét)    ║
 ╚══════════════════════════════════════════════════════════════════════╝
 """
 
@@ -16,56 +15,163 @@ from datetime import datetime
 
 # ─────────────────────────── CONFIG ───────────────────────────
 st.set_page_config(
-    page_title="Pricing Engine v3 — Unit Economics",
+    page_title="Pricing Engine — Unit Economics Suite",
     page_icon="🔥",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ─────────────────────────── THEME: WHITE + RED ───────────────────────────
-# Base colors are set in .streamlit/config.toml
-# CSS below only adds accents — does NOT override text colors globally.
-
-BRAND_RED = "#E8192C"
-BRAND_RED_LIGHT = "#FF4D5E"
-BRAND_RED_BG = "#FFF0F1"
-BRAND_RED_DARK = "#B71525"
+# ─────────────────────────── EXECUTIVE DESIGN SYSTEM ───────────────────────────
+BRAND_RED = "#DC2626"       # Vibrant, modern executive red
+BRAND_RED_HOVER = "#B91C1C"
+BRAND_RED_LIGHT = "#FEE2E2"
+BRAND_DARK = "#0F172A"      # Slate 900 (Deep, ultra-crisp text)
+BRAND_MUTED = "#475569"     # Slate 600 (Secondary readable text)
+BRAND_BORDER = "#E2E8F0"    # Crisp subtle border
+BRAND_BG = "#F8FAFC"        # Clean off-white canvas
 
 st.markdown(f"""
 <style>
-    /* ── Sidebar accent stripe ── */
+    /* ══════ TOÀN DIỆN HỆ THỐNG PHÔNG CHỮ & ĐỘ TƯƠNG PHẢN CAO ══════ */
+    html, body, [class*="css"], .stMarkdown {{
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        color: {BRAND_DARK} !important;
+    }}
+
+    /* Nền ứng dụng chính */
+    .stApp {{
+        background-color: {BRAND_BG};
+    }}
+
+    /* ══════ SIDEBAR (THANH BÊN) ══════ */
     section[data-testid="stSidebar"] {{
-        border-right: 4px solid {BRAND_RED};
+        background-color: #FFFFFF !important;
+        border-right: 1.5px solid {BRAND_BORDER} !important;
+    }}
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] h4 {{
+        color: {BRAND_DARK} !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.3px !important;
+    }}
+    section[data-testid="stSidebar"] label,
+    div[data-testid="stWidgetLabel"] label,
+    div[data-testid="stWidgetLabel"] p {{
+        color: {BRAND_DARK} !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+    }}
+    section[data-testid="stSidebar"] .stCaption,
+    section[data-testid="stSidebar"] small {{
+        color: {BRAND_MUTED} !important;
+        font-weight: 500 !important;
     }}
 
-    /* ── Metric cards ── */
+    /* ══════ INPUTS VÀ SELECTBOX ══════ */
+    .stTextInput input, 
+    .stNumberInput input, 
+    div[data-baseweb="select"] {{
+        background-color: #FFFFFF !important;
+        color: {BRAND_DARK} !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        border: 1.5px solid #CBD5E1 !important;
+        border-radius: 8px !important;
+    }}
+    .stTextInput input:focus, 
+    .stNumberInput input:focus {{
+        border-color: {BRAND_RED} !important;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+    }}
+    div[data-baseweb="select"] * {{
+        color: {BRAND_DARK} !important;
+    }}
+
+    /* ══════ METRIC CARDS (CHỈ SỐ TỔNG QUAN) ══════ */
     div[data-testid="stMetric"] {{
-        background: linear-gradient(135deg, {BRAND_RED_BG} 0%, #FFFFFF 100%);
-        border-left: 5px solid {BRAND_RED};
-        border-radius: 10px;
-        padding: 14px 18px;
-        box-shadow: 0 2px 8px rgba(232,25,44,0.08);
+        background: #FFFFFF !important;
+        border: 1.5px solid {BRAND_BORDER} !important;
+        border-top: 4px solid {BRAND_RED} !important;
+        border-radius: 12px !important;
+        padding: 16px 20px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }}
+    div[data-testid="stMetric"]:hover {{
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08) !important;
+    }}
+    div[data-testid="stMetricLabel"] p,
+    div[data-testid="stMetricLabel"] label {{
+        color: {BRAND_MUTED} !important;
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }}
+    div[data-testid="stMetricValue"] div {{
+        color: {BRAND_DARK} !important;
+        font-weight: 800 !important;
+        font-size: 1.85rem !important;
+    }}
+    div[data-testid="stMetricDelta"] {{
+        font-weight: 600 !important;
     }}
 
-    /* ── Active tab ── */
+    /* ══════ TABS ══════ */
+    button[data-baseweb="tab"] {{
+        color: {BRAND_MUTED} !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        padding: 10px 20px !important;
+    }}
     button[data-baseweb="tab"][aria-selected="true"] {{
+        color: {BRAND_RED} !important;
         border-bottom: 3px solid {BRAND_RED} !important;
+        font-weight: 700 !important;
     }}
 
-    /* ── Primary buttons ── */
+    /* ══════ EXPANDERS (KHUNG MỞ RỘNG) ══════ */
+    div[data-testid="stExpander"] {{
+        background-color: #FFFFFF !important;
+        border: 1.5px solid {BRAND_BORDER} !important;
+        border-radius: 10px !important;
+        margin-bottom: 8px !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important;
+    }}
+    div[data-testid="stExpander"] summary {{
+        color: {BRAND_DARK} !important;
+        font-weight: 700 !important;
+    }}
+    div[data-testid="stExpander"] summary:hover {{
+        color: {BRAND_RED} !important;
+    }}
+
+    /* ══════ NÚT BẤM (BUTTONS) ══════ */
     .stButton > button,
     .stDownloadButton > button {{
         background-color: {BRAND_RED} !important;
         color: #FFFFFF !important;
         border: none !important;
         border-radius: 8px !important;
-        font-weight: 600 !important;
-        transition: all 0.2s;
+        font-weight: 700 !important;
+        padding: 8px 18px !important;
+        box-shadow: 0 2px 4px rgba(220, 38, 38, 0.25) !important;
+        transition: all 0.2s ease !important;
     }}
     .stButton > button:hover,
     .stDownloadButton > button:hover {{
-        background-color: {BRAND_RED_DARK} !important;
-        box-shadow: 0 4px 12px rgba(232,25,44,0.3) !important;
+        background-color: {BRAND_RED_HOVER} !important;
+        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.35) !important;
+    }}
+
+    /* ══════ BẢNG DỮ LIỆU DATAFRAME ══════ */
+    .stDataFrame {{
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1.5px solid {BRAND_BORDER};
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -111,17 +217,17 @@ class AdsPageCost:
 
 @dataclass
 class StaffMember:
-    """Một nhân viên cụ thể."""
-    role: str = ""                    # Vị trí
-    name: str = ""                    # Tên
-    salary: float = 0.0              # Lương / tháng
-    commission_pct: float = 0.0      # Hoa hồng % trên doanh thu
-    active: bool = False             # Có đang làm việc không
+    """Đại diện cho 1 nhân viên cụ thể."""
+    role: str = ""
+    name: str = ""
+    salary: float = 0.0
+    commission_pct: float = 0.0
+    active: bool = False
 
 
 @dataclass
 class StaffTeam:
-    """Toàn bộ đội ngũ nhân sự — từng người riêng biệt."""
+    """Đội ngũ nhân sự — từng vị trí độc lập."""
     members: list = field(default_factory=list)
     estimated_monthly_orders: int = 200
 
@@ -139,22 +245,20 @@ class StaffTeam:
     def commission_per_unit(self, selling_price: float) -> float:
         return selling_price * self.total_commission_pct() / 100
 
-    def salary_breakdown_per_unit(self) -> list[tuple[str, float]]:
-        """Chi tiết lương phân bổ / đơn từng người."""
+    def salary_breakdown_per_unit(self) -> list[tuple[str, float, float]]:
         result = []
         for m in self.members:
             if m.active and m.salary > 0:
-                label = f"{m.role}: {m.name}" if m.name else m.role
+                label = f"{m.role} ({m.name})" if m.name else m.role
                 per_unit = m.salary / self.estimated_monthly_orders if self.estimated_monthly_orders > 0 else 0
                 result.append((label, per_unit, m.salary))
         return result
 
-    def commission_breakdown_per_unit(self, selling_price: float) -> list[tuple[str, float]]:
-        """Chi tiết hoa hồng / đơn từng người."""
+    def commission_breakdown_per_unit(self, selling_price: float) -> list[tuple[str, float, float]]:
         result = []
         for m in self.members:
             if m.active and m.commission_pct > 0:
-                label = f"{m.role}: {m.name}" if m.name else m.role
+                label = f"{m.role} ({m.name})" if m.name else m.role
                 per_unit = selling_price * m.commission_pct / 100
                 result.append((label, per_unit, m.commission_pct))
         return result
@@ -281,84 +385,150 @@ class PricingCalculator:
         net_profit = selling_price - total_cost
         margin_pct = (net_profit / selling_price * 100) if selling_price > 0 else 0
 
-        result = {"Doanh thu (Giá bán)": selling_price, "─── CHI PHÍ ───": ""}
+        result = {"Doanh thu (Giá bán)": selling_price}
         result.update(breakdown)
         result["⑪ Hoa hồng nhân viên"] = commission
-        result["─── TỔNG KẾT ───"] = ""
         result["TỔNG CHI PHÍ"] = total_cost
         result["LỢI NHUẬN RÒNG"] = net_profit
         result["BIÊN LỢI NHUẬN (%)"] = margin_pct
         return result
 
-    def staff_pnl_detail(self, selling_price: float) -> list[dict]:
-        """P&L chi tiết từng nhân viên."""
-        rows = []
-        for label, per_unit, monthly in self.p.staff.salary_breakdown_per_unit():
-            rows.append({
-                "Nhân viên": label,
-                "Lương / tháng": monthly,
-                "Phân bổ / đơn": per_unit,
-                "Loại": "Lương cố định",
-            })
-        for label, per_unit, pct in self.p.staff.commission_breakdown_per_unit(selling_price):
-            rows.append({
-                "Nhân viên": label,
-                "Hoa hồng (%)": pct,
-                "Phân bổ / đơn": per_unit,
-                "Loại": "Hoa hồng",
-            })
-        return rows
 
-
-# ─────────────────────────── PRESET DATA ───────────────────────────
+# ─────────────────────────── PRESETS ───────────────────────────
 
 SAMPLE_PRODUCTS = {
     "BG-001 — Bếp gas đôi kính cường lực": {
-        "cogs": 850_000, "box": 35_000, "foam": 25_000,
-        "glass": 15_000, "tape": 5_000,
+        "cogs": 850_000, "box": 35_000, "foam": 25_000, "glass": 15_000, "tape": 5_000,
     },
     "BG-002 — Bếp gas đơn inox": {
-        "cogs": 420_000, "box": 25_000, "foam": 15_000,
-        "glass": 0, "tape": 5_000,
+        "cogs": 420_000, "box": 25_000, "foam": 15_000, "glass": 0, "tape": 5_000,
     },
     "BT-001 — Bếp từ đôi âm": {
-        "cogs": 1_500_000, "box": 45_000, "foam": 35_000,
-        "glass": 20_000, "tape": 5_000,
+        "cogs": 1_500_000, "box": 45_000, "foam": 35_000, "glass": 20_000, "tape": 5_000,
     },
     "BT-002 — Bếp từ đơn di động": {
-        "cogs": 650_000, "box": 20_000, "foam": 15_000,
-        "glass": 10_000, "tape": 5_000,
+        "cogs": 650_000, "box": 20_000, "foam": 15_000, "glass": 10_000, "tape": 5_000,
     },
     "🔧 Nhập tùy chỉnh": {
         "cogs": 0, "box": 0, "foam": 0, "glass": 0, "tape": 0,
     },
 }
 
-# Default staff roster
 DEFAULT_STAFF = [
-    {"role": "NV Livestream 1", "name": "", "salary": 7_000_000, "commission": 1.0, "active": True},
-    {"role": "NV Livestream 2", "name": "", "salary": 7_000_000, "commission": 1.0, "active": True},
-    {"role": "NV Chăm sóc KH", "name": "", "salary": 6_000_000, "commission": 0.0, "active": True},
-    {"role": "NV Quản lý",     "name": "", "salary": 10_000_000, "commission": 0.0, "active": True},
-    {"role": "Vị trí 5",       "name": "", "salary": 0, "commission": 0.0, "active": False},
-    {"role": "Vị trí 6",       "name": "", "salary": 0, "commission": 0.0, "active": False},
-    {"role": "Vị trí 7",       "name": "", "salary": 0, "commission": 0.0, "active": False},
+    {"role": "NV Livestream 1", "name": "Thảo", "salary": 7_000_000, "commission": 1.0, "active": True},
+    {"role": "NV Livestream 2", "name": "Minh", "salary": 7_000_000, "commission": 1.0, "active": True},
+    {"role": "NV Chăm sóc KH", "name": "Hương", "salary": 6_000_000, "commission": 0.0, "active": True},
+    {"role": "NV Quản lý",     "name": "Tùng",  "salary": 10_000_000, "commission": 0.0, "active": True},
+    {"role": "NV Kỹ thuật / Kho", "name": "", "salary": 0, "commission": 0.0, "active": False},
+    {"role": "Vị trí bổ sung 1", "name": "", "salary": 0, "commission": 0.0, "active": False},
+    {"role": "Vị trí bổ sung 2", "name": "", "salary": 0, "commission": 0.0, "active": False},
 ]
 
 
-# ─────────────────────────── HELPERS ───────────────────────────
-
 def format_vnd(value: float) -> str:
-    if value == float('inf'):
-        return "∞ (Không khả thi)"
+    if value == float('inf') or value != value:
+        return "∞ Không khả thi"
     return f"{value:,.0f} ₫"
+
+
+# ─────────────────────────── UI RENDERERS ───────────────────────────
+
+def render_executive_pnl_table(calc: PricingCalculator, bep: float, p15: float, p20: float, custom_p: float = 0):
+    """Bảng so sánh P&L tổng thể đa kịch bản với độ tương phản cao."""
+    scenarios = [
+        ("🔴 Hòa vốn (BEP)", bep),
+        ("🟡 Biên 15%", p15),
+        ("🟢 Biên 20%", p20),
+    ]
+    if custom_p > 0:
+        scenarios.append(("🎯 Giá tùy chọn", custom_p))
+
+    pnls = [calc.pnl_at_price(price) for _, price in scenarios]
+
+    items = [
+        ("DOANH THU & GIÁ BÁN", [("Doanh thu (Giá bán)", lambda p: format_vnd(p["Doanh thu (Giá bán)"]))]),
+        ("GIÁ VỐN & ĐÓNG GÓI CHỐNG VỠ", [
+            ("① Giá nhập (COGS)", lambda p: format_vnd(p["① Giá nhập (COGS)"])),
+            ("② Bao bì đóng gói chống sốc", lambda p: format_vnd(p["② Bao bì đóng gói chống sốc"])),
+            ("③ Dự phòng hỏng / vỡ kính (5%)", lambda p: format_vnd(p["③ Dự phòng hàng hỏng / vỡ kính"])),
+        ]),
+        ("CHI PHÍ BÁN HÀNG & MARKETING", [
+            ("④ Chi phí Ads Livestream", lambda p: format_vnd(p["④ Chi phí Ads Livestream"])),
+            ("⑤ Chi phí Ads Page", lambda p: format_vnd(p["⑤ Chi phí Ads Page"])),
+        ]),
+        ("CHI PHÍ NHÂN SỰ TỪNG VỊ TRÍ", [
+            ("⑥ Lương cố định nhân viên", lambda p: format_vnd(p["⑥ Lương nhân sự (phân bổ)"])),
+            ("⑪ Hoa hồng bán hàng", lambda p: format_vnd(p["⑪ Hoa hồng nhân viên"])),
+        ]),
+        ("VẬN HÀNH & HẬU MÃI", [
+            ("⑦ Chi phí mặt bằng phân bổ", lambda p: format_vnd(p["⑦ Chi phí mặt bằng (phân bổ)"])),
+            ("⑧ Chi phí vận chuyển & hoàn hàng", lambda p: format_vnd(p["⑧ Chi phí vận chuyển"])),
+            ("⑨ Chi phí bảo hành sản phẩm", lambda p: format_vnd(p["⑨ Chi phí bảo hành"])),
+            ("⑩ Chi phí dự phòng phát sinh", lambda p: format_vnd(p["⑩ Chi phí phát sinh (phân bổ)"])),
+        ]),
+        ("KẾT QUẢ KINH DOANH DỰ KIẾN", [
+            ("TỔNG CHI PHÍ / ĐƠN", lambda p: format_vnd(p["TỔNG CHI PHÍ"])),
+            ("LỢI NHUẬN RÒNG / ĐƠN", lambda p: format_vnd(p["LỢI NHUẬN RÒNG"])),
+            ("TỶ SUẤT BIÊN LN (%)", lambda p: f"{p['BIÊN LỢI NHUẬN (%)']:.1f}%"),
+        ])
+    ]
+
+    html = f"""
+    <div style="background:#FFFFFF; border:1.5px solid {BRAND_BORDER}; border-radius:12px; overflow:hidden; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05); margin-top:10px;">
+        <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.95rem;">
+            <thead>
+                <tr style="background:#0F172A; color:#FFFFFF;">
+                    <th style="padding:14px 18px; font-weight:700; width:38%;">Khoản mục kinh tế (Unit Economics)</th>
+    """
+    for name, _ in scenarios:
+        html += f"""<th style="padding:14px 18px; text-align:right; font-weight:700; color:#FFFFFF;">{name}</th>"""
+    html += "</tr></thead><tbody>"
+
+    for group_name, row_items in items:
+        is_summary = group_name == "KẾT QUẢ KINH DOANH DỰ KIẾN"
+        group_bg = "#FEF2F2" if is_summary else "#F1F5F9"
+        group_color = BRAND_RED if is_summary else BRAND_DARK
+        
+        html += f"""
+        <tr style="background:{group_bg};">
+            <td colspan="{len(scenarios) + 1}" style="padding:10px 18px; font-weight:800; color:{group_color}; letter-spacing:0.3px; border-top:1px solid {BRAND_BORDER};">
+                {group_name}
+            </td>
+        </tr>
+        """
+        for label, val_func in row_items:
+            is_profit_row = "LỢI NHUẬN RÒNG" in label or "BIÊN LN" in label
+            is_cost_row = "TỔNG CHI PHÍ" in label
+            
+            row_style = ""
+            if is_profit_row:
+                row_style = "background:#F0FDF4; font-weight:700;"
+            elif is_cost_row:
+                row_style = "background:#FFF1F2; font-weight:700;"
+            
+            html += f"""<tr style="border-bottom:1px solid #F1F5F9; {row_style}">
+                <td style="padding:10px 18px; color:{BRAND_DARK};">{label}</td>
+            """
+            for p in pnls:
+                val_text = val_func(p)
+                text_color = BRAND_DARK
+                if is_profit_row:
+                    text_color = "#15803D" if p["LỢI NHUẬN RÒNG"] >= 0 else BRAND_RED
+                elif is_cost_row:
+                    text_color = BRAND_RED
+                
+                html += f"""<td style="padding:10px 18px; text-align:right; font-weight:{'800' if is_profit_row or is_cost_row else '600'}; color:{text_color};">{val_text}</td>"""
+            html += "</tr>"
+
+    html += "</tbody></table></div>"
+    st.markdown(html, unsafe_allow_html=True)
 
 
 def render_pnl_waterfall(pnl: dict, title: str):
     cost_keys = [k for k in pnl if k[0] in "①②③④⑤⑥⑦⑧⑨⑩⑪"]
     short_labels = {
-        "①": "COGS", "②": "Đóng gói", "③": "Hỏng/vỡ",
-        "④": "Ads Live", "⑤": "Ads Page", "⑥": "Nhân sự",
+        "①": "COGS", "②": "Bao bì", "③": "Hỏng/vỡ kính",
+        "④": "Ads Live", "⑤": "Ads Page", "⑥": "Lương NS",
         "⑦": "Mặt bằng", "⑧": "Vận chuyển", "⑨": "Bảo hành",
         "⑩": "Phát sinh", "⑪": "Hoa hồng",
     }
@@ -373,7 +543,7 @@ def render_pnl_waterfall(pnl: dict, title: str):
         values.append(-pnl[k])
         measures.append("relative")
 
-    labels.append("Lợi nhuận")
+    labels.append("Lợi nhuận ròng")
     values.append(pnl["LỢI NHUẬN RÒNG"])
     measures.append("total")
 
@@ -381,25 +551,27 @@ def render_pnl_waterfall(pnl: dict, title: str):
         x=labels, y=values, measure=measures,
         textposition="outside",
         text=[format_vnd(abs(v)) for v in values],
-        connector={"line": {"color": "#ccc"}},
-        increasing={"marker": {"color": "#2ecc71"}},
+        connector={"line": {"color": "#94A3B8"}},
+        increasing={"marker": {"color": "#16A34A"}},
         decreasing={"marker": {"color": BRAND_RED}},
-        totals={"marker": {"color": "#2ecc71" if pnl["LỢI NHUẬN RÒNG"] >= 0 else BRAND_RED}},
+        totals={"marker": {"color": "#16A34A" if pnl["LỢI NHUẬN RÒNG"] >= 0 else BRAND_RED}},
     ))
     fig.update_layout(
-        title=dict(text=title, font=dict(color=BRAND_RED_DARK)),
-        showlegend=False, height=450,
-        margin=dict(t=60, b=60), yaxis_title="VNĐ",
-        xaxis_tickangle=-35, plot_bgcolor="#FFFFFF",
+        title=dict(text=title, font=dict(color=BRAND_DARK, size=15, weight=700)),
+        showlegend=False, height=440,
+        margin=dict(t=50, b=50, l=40, r=40),
+        xaxis_tickangle=-30,
+        plot_bgcolor="#FFFFFF",
         paper_bgcolor="#FFFFFF",
+        font=dict(color=BRAND_DARK, family="sans-serif"),
     )
     st.plotly_chart(fig, use_container_width=True)
 
 
 def render_cost_pie(pnl: dict):
     short_labels = {
-        "①": "COGS", "②": "Đóng gói", "③": "Hỏng/vỡ",
-        "④": "Ads Live", "⑤": "Ads Page", "⑥": "Nhân sự",
+        "①": "COGS", "②": "Bao bì", "③": "Hỏng/vỡ",
+        "④": "Ads Live", "⑤": "Ads Page", "⑥": "Lương NS",
         "⑦": "Mặt bằng", "⑧": "Vận chuyển", "⑨": "Bảo hành",
         "⑩": "Phát sinh", "⑪": "Hoa hồng",
     }
@@ -412,15 +584,19 @@ def render_cost_pie(pnl: dict):
     if not values:
         return
 
-    red_palette = [
-        "#E8192C", "#FF4D5E", "#FF7A87", "#FFB3BA", "#C0392B",
-        "#E74C3C", "#F1948A", "#FADBD8", "#D35400", "#E67E22", "#F39C12",
+    palette = [
+        "#DC2626", "#EF4444", "#F87171", "#FCA5A5",
+        "#0F172A", "#334155", "#64748B", "#94A3B8",
+        "#EA580C", "#F59E0B", "#10B981"
     ]
-    fig = px.pie(names=labels, values=values, title="Cơ cấu chi phí",
-                 hole=0.4, color_discrete_sequence=red_palette)
-    fig.update_traces(textposition='inside', textinfo='percent+label')
-    fig.update_layout(height=420, margin=dict(t=60, b=20),
-                      plot_bgcolor="#FFFFFF", paper_bgcolor="#FFFFFF")
+    fig = px.pie(names=labels, values=values, title="Cơ cấu chi phí đơn hàng",
+                 hole=0.45, color_discrete_sequence=palette)
+    fig.update_traces(textposition='inside', textinfo='percent+label', textfont_size=12)
+    fig.update_layout(
+        height=440, margin=dict(t=50, b=20, l=20, r=20),
+        plot_bgcolor="#FFFFFF", paper_bgcolor="#FFFFFF",
+        font=dict(color=BRAND_DARK, family="sans-serif"),
+    )
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -431,226 +607,152 @@ def render_margin_curve(calc: PricingCalculator, bep: float):
     margins = [calc.pnl_at_price(p)["BIÊN LỢI NHUẬN (%)"] for p in prices]
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=prices, y=margins, mode='lines+markers',
-                              name='Biên LN (%)',
-                              line=dict(color=BRAND_RED, width=3),
-                              marker=dict(size=4, color=BRAND_RED)))
-    fig.add_hline(y=0, line_dash="dash", line_color="#999", annotation_text="Hòa vốn")
-    fig.add_hline(y=15, line_dash="dot", line_color="#f39c12", annotation_text="Mục tiêu 15%")
-    fig.add_hline(y=20, line_dash="dot", line_color="#2ecc71", annotation_text="Mục tiêu 20%")
-    fig.add_vline(x=bep, line_dash="dash", line_color=BRAND_RED,
-                  annotation_text=f"BEP: {format_vnd(bep)}")
+    fig.add_trace(go.Scatter(
+        x=prices, y=margins, mode='lines+markers',
+        name='Biên LN Ròng (%)',
+        line=dict(color=BRAND_RED, width=3),
+        marker=dict(size=5, color=BRAND_RED)
+    ))
+    fig.add_hline(y=0, line_dash="dash", line_color="#64748B", annotation_text="Hòa vốn (0%)")
+    fig.add_hline(y=15, line_dash="dot", line_color="#F59E0B", annotation_text="Mục tiêu 15%")
+    fig.add_hline(y=20, line_dash="dot", line_color="#10B981", annotation_text="Mục tiêu 20%")
+    fig.add_vline(x=bep, line_dash="dash", line_color=BRAND_RED, annotation_text=f"BEP: {format_vnd(bep)}")
     fig.update_layout(
-        title=dict(text="Biên lợi nhuận theo giá bán", font=dict(color=BRAND_RED_DARK)),
-        xaxis_title="Giá bán (VNĐ)", yaxis_title="Biên lợi nhuận (%)",
-        height=420, plot_bgcolor="#FFFFFF", paper_bgcolor="#FFFFFF",
+        title=dict(text="Đường cong độ co giãn Biên lợi nhuận theo Giá bán", font=dict(color=BRAND_DARK, size=15, weight=700)),
+        xaxis_title="Giá bán ra thị trường (VNĐ)",
+        yaxis_title="Biên lợi nhuận ròng (%)",
+        height=400, plot_bgcolor="#FFFFFF", paper_bgcolor="#FFFFFF",
+        font=dict(color=BRAND_DARK, family="sans-serif"),
     )
     st.plotly_chart(fig, use_container_width=True)
 
 
-def render_pnl_column(pnl: dict, title: str):
-    st.markdown(f"#### {title}")
-    for k, v in pnl.items():
-        if isinstance(v, str) and v == "":
-            st.markdown(f"**{k}**")
-        elif isinstance(v, (int, float)):
-            if "%" in k:
-                st.markdown(f"&nbsp;&nbsp;&nbsp;{k}: **{v:.1f}%**")
-            else:
-                color = ""
-                if "LỢI NHUẬN" in k:
-                    color = "red" if v < 0 else "green"
-                st.markdown(f"&nbsp;&nbsp;&nbsp;{k}: **{format_vnd(v)}**"
-                            + (f" :{color}[●]" if color else ""))
-
-
-def render_staff_detail_table(calc: PricingCalculator, selling_price: float):
-    """Bảng chi tiết từng nhân viên."""
-    rows = calc.staff_pnl_detail(selling_price)
-    if not rows:
-        st.info("Chưa có nhân viên nào được kích hoạt.")
-        return
-
-    df = pd.DataFrame(rows)
-    for col in ["Lương / tháng", "Phân bổ / đơn"]:
-        if col in df.columns:
-            df[col] = df[col].apply(lambda x: format_vnd(x) if pd.notna(x) else "—")
-    if "Hoa hồng (%)" in df.columns:
-        df["Hoa hồng (%)"] = df["Hoa hồng (%)"].apply(lambda x: f"{x:.1f}%" if pd.notna(x) else "—")
-    st.dataframe(df, use_container_width=True, hide_index=True)
-
-
-# ─────────────────────────── MAIN UI ───────────────────────────
+# ─────────────────────────── MAIN APPLICATION ───────────────────────────
 
 def main():
+    # ── Executive Top Banner ──
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, {BRAND_RED} 0%, {BRAND_RED_DARK} 100%);
-                padding: 24px 32px; border-radius: 12px; margin-bottom: 24px;
-                box-shadow: 0 4px 20px rgba(232,25,44,0.2);">
-        <div style="text-align:center;">
-            <span style="font-size:2.2em; font-weight:800; color:#FFFFFF; letter-spacing:2px;">
-                🔥 PRICING ENGINE</span>
-            <br>
-            <span style="font-size:1em; color:rgba(255,255,255,0.85); letter-spacing:1px;">
-                Phân tích giá &amp; lãi lỗ &nbsp;·&nbsp; Gia dụng (Bếp gas, Bếp từ)
-                &nbsp;·&nbsp; Livestream · Page · Showroom</span>
+    <div style="background:#FFFFFF; border:1.5px solid {BRAND_BORDER}; border-left:6px solid {BRAND_RED};
+                padding:20px 24px; border-radius:12px; margin-bottom:20px;
+                box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+            <div>
+                <span style="font-size:1.8rem; font-weight:900; color:{BRAND_DARK}; letter-spacing:-0.5px;">
+                    🔥 PRICING ENGINE <span style="color:{BRAND_RED};">PRO</span>
+                </span>
+                <span style="background:{BRAND_RED_LIGHT}; color:{BRAND_RED}; font-size:0.75rem; font-weight:700; padding:3px 8px; border-radius:6px; margin-left:8px; vertical-align:middle;">
+                    v3.2 EXECUTIVE
+                </span>
+                <div style="font-size:0.95rem; font-weight:500; color:{BRAND_MUTED}; margin-top:4px;">
+                    Hệ thống tính toán Unit Economics & Kiến trúc định giá sản phẩm Gia dụng (Bếp gas, Bếp từ)
+                </div>
+            </div>
+            <div style="text-align:right; font-size:0.85rem; color:{BRAND_MUTED};">
+                <b>Kênh bán:</b> Livestream · Page Ads · Showroom<br>
+                <b>Cập nhật:</b> {datetime.now().strftime('%d/%m/%Y')}
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # ══════════════════════ SIDEBAR ══════════════════════
+    # ══════════════════════ SIDEBAR (THAM SỐ ĐẦU VÀO) ══════════════════════
     with st.sidebar:
-        st.markdown(f"### ⚙️ THÔNG SỐ ĐẦU VÀO")
+        st.markdown(f"### ⚙️ THIẾT LẬP THAM SỐ")
 
         # ── Sản phẩm ──
-        st.markdown("#### 📦 Sản phẩm")
-        selected = st.selectbox("Chọn mã sản phẩm mẫu",
-                                 options=list(SAMPLE_PRODUCTS.keys()))
+        st.markdown("#### 📦 1. Mã sản phẩm")
+        selected = st.selectbox("Chọn mẫu sản phẩm gia dụng", options=list(SAMPLE_PRODUCTS.keys()))
         preset = SAMPLE_PRODUCTS[selected]
-        sku = st.text_input("Mã SKU",
-                             value=selected.split(" — ")[0] if " — " in selected else "")
-        product_name = st.text_input("Tên sản phẩm",
-                                      value=selected.split(" — ")[1] if " — " in selected else "")
+        sku = st.text_input("Mã SKU", value=selected.split(" — ")[0] if " — " in selected else "SKU-01")
+        product_name = st.text_input("Tên sản phẩm", value=selected.split(" — ")[1] if " — " in selected else "Bếp Gia Dụng")
 
-        # ── Đơn hàng ──
         st.markdown("---")
-        st.markdown("#### 📊 Đơn hàng ước tính")
-        monthly_orders = st.number_input("Tổng đơn / tháng", min_value=1,
-                                          value=200, step=10)
+        # ── Sản lượng ──
+        st.markdown("#### 📊 2. Sản lượng bán / tháng")
+        monthly_orders = st.number_input("Tổng đơn hàng dự kiến / tháng", min_value=1, value=200, step=10,
+                                          help="Dùng để chia đều chi phí cố định (mặt bằng, lương cơ bản, ads...)")
 
-        # ── 1. COGS ──
         st.markdown("---")
-        st.markdown("#### 💰 1. Giá nhập (COGS)")
-        cogs = st.number_input("Giá nhập / SP (₫)", min_value=0,
-                                value=preset["cogs"], step=10_000)
+        # ── Giá vốn & Đóng gói ──
+        st.markdown("#### 💰 3. Giá vốn & Đóng gói")
+        cogs = st.number_input("Giá nhập kho (COGS) (₫)", min_value=0, value=preset["cogs"], step=10_000)
 
-        # ── 2. Bao bì ──
-        st.markdown("---")
-        st.markdown("#### 📦 2. Bao bì đóng gói")
         c1, c2 = st.columns(2)
         with c1:
-            box_cost = st.number_input("Thùng carton", min_value=0,
-                                        value=preset["box"], step=5_000)
-            glass_prot = st.number_input("Bảo vệ kính", min_value=0,
-                                          value=preset["glass"], step=5_000)
+            box_cost = st.number_input("Thùng carton", min_value=0, value=preset["box"], step=5_000)
+            glass_prot = st.number_input("Bảo vệ kính", min_value=0, value=preset["glass"], step=5_000)
         with c2:
-            foam_cost = st.number_input("Xốp chống sốc", min_value=0,
-                                         value=preset["foam"], step=5_000)
-            tape_label = st.number_input("Băng keo, nhãn", min_value=0,
-                                          value=preset["tape"], step=1_000)
+            foam_cost = st.number_input("Xốp chống sốc", min_value=0, value=preset["foam"], step=5_000)
+            tape_label = st.number_input("Băng keo, tem", min_value=0, value=preset["tape"], step=1_000)
 
-        # ── 3. Hàng hỏng ──
-        st.markdown("---")
-        st.markdown("#### 💔 3. Dự phòng hàng hỏng")
-        breakage = st.slider("Tỷ lệ hỏng / vỡ kính (%)", 0.0, 20.0, 5.0, 0.5)
+        breakage = st.slider("Dự phòng bể vỡ / hỏng kính (%)", 0.0, 20.0, 5.0, 0.5,
+                             help="Mặc định 5% giá trị COGS do đặc thù mặt kính cường lực bếp gas/từ")
 
-        # ── 4. Ads Livestream ──
         st.markdown("---")
-        st.markdown("#### 📺 4. Ads Livestream")
-        ads_ls_daily = st.number_input("Budget ads live / ngày (₫)",
-                                        min_value=0, value=500_000, step=50_000)
+        # ── Marketing & Ads ──
+        st.markdown("#### 📺 4. Chi phí Marketing & Ads")
+        ads_ls_daily = st.number_input("Ngân sách Ads mồi Live / ngày (₫)", min_value=0, value=500_000, step=50_000)
         c3, c4 = st.columns(2)
         with c3:
-            ls_sessions = st.number_input("Phiên / tháng", min_value=1, value=20)
+            ls_sessions = st.number_input("Phiên Live / tháng", min_value=1, value=20)
         with c4:
-            ls_orders = st.number_input("Đơn / phiên", min_value=1, value=10)
+            ls_orders = st.number_input("Đơn TB / phiên", min_value=1, value=10)
 
-        # ── 5. Ads Page ──
+        ads_page_monthly = st.number_input("Ngân sách Ads Page (FB/TikTok) / tháng (₫)", min_value=0, value=5_000_000, step=500_000)
+        page_orders = st.number_input("Số đơn chốt từ Page / tháng", min_value=1, value=50, step=5)
+
         st.markdown("---")
-        st.markdown("#### 📱 5. Ads Page")
-        ads_page_monthly = st.number_input("Budget ads page / tháng (₫)",
-                                            min_value=0, value=5_000_000, step=500_000)
-        page_orders = st.number_input("Đơn từ page / tháng", min_value=1,
-                                       value=50, step=5)
+        # ── Nhân sự (Tách biệt từng người) ──
+        st.markdown("#### 👥 5. Chi phí Nhân sự (Từng vị trí)")
+        st.caption("Cấu hình lương & hoa hồng độc lập cho từng bạn:")
 
-        # ── 6. NHÂN SỰ — TÁCH BIỆT TỪNG NGƯỜI ──
-        st.markdown("---")
-        st.markdown(f"#### 👥 6. Chi phí nhân sự (từng người)")
-        st.caption("Mỗi nhân viên 1 cột riêng — bật/tắt theo nhu cầu")
-
-    # Build staff members from sidebar
     staff_members = []
     with st.sidebar:
         for i, default in enumerate(DEFAULT_STAFF):
-            is_preset = i < 4  # 4 vị trí mặc định
-            with st.expander(
-                f"{'🟢' if default['active'] else '⚪'} {default['role']}",
-                expanded=is_preset,
-            ):
-                active = st.checkbox("Đang làm việc", value=default["active"],
-                                      key=f"staff_active_{i}")
-                role = st.text_input("Vị trí", value=default["role"],
-                                      key=f"staff_role_{i}")
-                name = st.text_input("Họ tên", value=default["name"],
-                                      key=f"staff_name_{i}",
-                                      placeholder="Nhập tên nhân viên…")
-                salary = st.number_input("Lương / tháng (₫)", min_value=0,
-                                          value=default["salary"], step=500_000,
-                                          key=f"staff_salary_{i}")
-                comm = st.number_input("Hoa hồng (%)", min_value=0.0,
-                                        value=default["commission"], step=0.5,
-                                        key=f"staff_comm_{i}",
-                                        help="% trên doanh thu / đơn")
+            is_open = i < 4
+            status_icon = "🟢" if default["active"] else "⚪"
+            with st.expander(f"{status_icon} {default['role']}", expanded=is_open):
+                active = st.checkbox("Kích hoạt tính lương", value=default["active"], key=f"st_act_{i}")
+                role = st.text_input("Chức danh", value=default["role"], key=f"st_rol_{i}")
+                name = st.text_input("Tên nhân sự", value=default["name"], key=f"st_nam_{i}", placeholder="Họ và tên...")
+                salary = st.number_input("Lương cứng / tháng (₫)", min_value=0, value=default["salary"], step=500_000, key=f"st_sal_{i}")
+                comm = st.number_input("Hoa hồng (% DT)", min_value=0.0, value=default["commission"], step=0.5, key=f"st_com_{i}")
 
-                staff_members.append(StaffMember(
-                    role=role, name=name, salary=salary,
-                    commission_pct=comm, active=active,
-                ))
+                staff_members.append(StaffMember(role=role, name=name, salary=salary, commission_pct=comm, active=active))
 
-    with st.sidebar:
-        # ── 7. Mặt bằng ──
         st.markdown("---")
-        st.markdown("#### 🏠 7. Mặt bằng")
+        # ── Mặt bằng & Vận hành ──
+        st.markdown("#### 🏠 6. Mặt bằng & Vận hành")
+        c5, c6 = st.columns(2)
+        with c5:
+            warehouse = st.number_input("Thuê kho / tháng", min_value=0, value=5_000_000, step=500_000)
+            showroom = st.number_input("Showroom / tháng", min_value=0, value=8_000_000, step=500_000)
+        with c6:
+            office = st.number_input("Văn phòng / tháng", min_value=0, value=0, step=500_000)
+            utilities = st.number_input("Điện, nước, net", min_value=0, value=3_000_000, step=500_000)
+
+        st.markdown("---")
+        # ── Vận chuyển & Bảo hành ──
+        st.markdown("#### 🚚 7. Vận chuyển, BH & Phát sinh")
         c7, c8 = st.columns(2)
         with c7:
-            warehouse = st.number_input("Thuê kho / tháng", min_value=0,
-                                         value=5_000_000, step=500_000)
-            showroom = st.number_input("Thuê showroom / tháng", min_value=0,
-                                        value=8_000_000, step=500_000)
+            ship_in = st.number_input("Nhập kho / SP", min_value=0, value=10_000, step=5_000)
+            ship_out = st.number_input("Ship đến KH / đơn", min_value=0, value=30_000, step=5_000)
         with c8:
-            office = st.number_input("Thuê VP / tháng", min_value=0,
-                                      value=0, step=500_000)
-            utilities = st.number_input("Điện nước, net / tháng", min_value=0,
-                                         value=3_000_000, step=500_000)
+            return_rate = st.number_input("Tỷ lệ hoàn (%)", min_value=0.0, value=3.0, step=0.5)
+            return_ship = st.number_input("Phí hoàn / đơn", min_value=0, value=30_000, step=5_000)
 
-        # ── 8. Vận chuyển ──
-        st.markdown("---")
-        st.markdown("#### 🚚 8. Vận chuyển")
         c9, c10 = st.columns(2)
         with c9:
-            ship_in = st.number_input("Nhập kho / SP", min_value=0,
-                                       value=10_000, step=5_000)
-            ship_out = st.number_input("Ship đến KH / đơn", min_value=0,
-                                        value=30_000, step=5_000)
+            warranty_rate = st.number_input("Tỷ lệ BH (%)", min_value=0.0, value=3.0, step=0.5)
+            repair_cost = st.number_input("Phí sửa / vụ", min_value=0, value=100_000, step=10_000)
         with c10:
-            return_rate = st.number_input("Tỷ lệ hoàn (%)", min_value=0.0,
-                                           value=3.0, step=0.5)
-            return_ship = st.number_input("Ship hoàn / đơn", min_value=0,
-                                           value=30_000, step=5_000)
+            replace_cost = st.number_input("Phí đổi mới / vụ", min_value=0, value=0, step=50_000)
+            replace_ratio = st.number_input("% Đổi mới", min_value=0.0, value=10.0, step=5.0)
 
-        # ── 9. Bảo hành ──
-        st.markdown("---")
-        st.markdown("#### 🔧 9. Bảo hành")
-        c11, c12 = st.columns(2)
-        with c11:
-            warranty_rate = st.number_input("Tỷ lệ BH (%)", min_value=0.0,
-                                             value=3.0, step=0.5)
-            repair_cost = st.number_input("CP sửa chữa / case", min_value=0,
-                                           value=100_000, step=10_000)
-        with c12:
-            replace_cost = st.number_input("CP đổi mới / case", min_value=0,
-                                            value=0, step=50_000)
-            replace_ratio = st.number_input("% đổi mới", min_value=0.0,
-                                             value=10.0, step=5.0)
+        contingency = st.number_input("Dự phòng phát sinh / tháng (₫)", min_value=0, value=2_000_000, step=500_000)
 
-        # ── 10. Phát sinh ──
-        st.markdown("---")
-        st.markdown("#### ⚡ 10. Phát sinh")
-        contingency = st.number_input("Dự phòng / tháng (₫)", min_value=0,
-                                       value=2_000_000, step=500_000)
-
-    # ══════════════════════ BUILD PRODUCT ══════════════════════
-
+    # ══════════════════════ OBJECT COMPILATION ══════════════════════
     product = ProductInput(
         sku=sku, product_name=product_name, cogs=cogs,
         packaging=PackagingCost(box_cost, foam_cost, glass_prot, tape_label),
@@ -665,219 +767,244 @@ def main():
     )
 
     calc = PricingCalculator(product)
-
-    # ══════════════════════ KEY METRICS ══════════════════════
-
     bep = calc.breakeven_price()
-    price_15 = calc.price_for_margin(15)
-    price_20 = calc.price_for_margin(20)
+    p15 = calc.price_for_margin(15)
+    p20 = calc.price_for_margin(20)
 
-    st.markdown(f"### 📊 Kết quả: **{sku}** — {product_name}")
+    # ══════════════════════ EXECUTIVE KPI CARDS ══════════════════════
+    st.markdown(f"#### 🎯 CHỈ SỐ GIÁ MỤC TIÊU: <span style='color:{BRAND_RED};'>{sku}</span> — {product_name}", unsafe_allow_html=True)
 
-    m1, m2, m3, m4 = st.columns(4)
-    with m1:
-        st.metric("🔴 Điểm hòa vốn (BEP)", format_vnd(bep))
-    with m2:
-        st.metric("🟡 Giá đề xuất (Biên 15%)", format_vnd(price_15))
-    with m3:
-        st.metric("🟢 Giá đề xuất (Biên 20%)", format_vnd(price_20))
-    with m4:
-        if price_20 != float('inf'):
-            profit_20 = calc.pnl_at_price(price_20)["LỢI NHUẬN RÒNG"]
-            st.metric("💵 LN ròng / đơn @20%", format_vnd(profit_20))
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric(
+            label="🔴 ĐIỂM HÒA VỐN (BEP)",
+            value=format_vnd(bep),
+            help="Mức giá bán tối thiểu thu hồi đủ toàn bộ giá vốn, chi phí ads, mặt bằng và nhân sự."
+        )
+    with col2:
+        diff_15 = p15 - bep if (p15 != float('inf') and bep != float('inf')) else 0
+        st.metric(
+            label="🟡 GIÁ ĐỀ XUẤT (BIÊN 15%)",
+            value=format_vnd(p15),
+            delta=f"+{format_vnd(diff_15)} chênh hòa vốn" if diff_15 > 0 else None,
+            help="Mức giá an toàn đảm bảo biên lợi nhuận ròng 15% sau khi trừ hết chi phí."
+        )
+    with col3:
+        diff_20 = p20 - bep if (p20 != float('inf') and bep != float('inf')) else 0
+        st.metric(
+            label="🟢 GIÁ ĐỀ XUẤT (BIÊN 20%)",
+            value=format_vnd(p20),
+            delta=f"+{format_vnd(diff_20)} chênh hòa vốn" if diff_20 > 0 else None,
+            help="Mức giá mục tiêu tối ưu cho doanh nghiệp đạt biên ròng 20%."
+        )
+    with col4:
+        profit_20 = calc.pnl_at_price(p20)["LỢI NHUẬN RÒNG"] if p20 != float('inf') else 0
+        st.metric(
+            label="💵 LỢI NHUẬN RÒNG / ĐƠN (@20%)",
+            value=format_vnd(profit_20),
+            help="Số tiền lãi ròng thực tế công ty giữ lại trên mỗi sản phẩm bán ra ở mức giá biên 20%."
+        )
 
-    st.markdown(f'<div style="height:3px; background:linear-gradient(90deg, {BRAND_RED}, {BRAND_RED_LIGHT}, transparent); border-radius:2px; margin:20px 0;"></div>', unsafe_allow_html=True)
+    st.markdown("<div style='margin-bottom:20px;'></div>", unsafe_allow_html=True)
 
-    # ══════════════════════ TABS ══════════════════════
-
+    # ══════════════════════ TABS PHÂN TÍCH CHUYÊN SÂU ══════════════════════
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "📋 P&L chi tiết",
-        "👥 Chi tiết nhân sự",
-        "📊 Biểu đồ",
-        "🔍 Phân tích độ nhạy",
-        "📤 So sánh đa SKU",
+        "📋 Bảng P&L So Sánh Dự Kiến",
+        "👥 Chi Tiết Từng Nhân Sự",
+        "📊 Biểu Đồ Cơ Cấu & Xu Hướng",
+        "🔍 Ma Trận Độ Nhạy Lợi Nhuận",
+        "📤 Bảng So Sánh Toàn Bộ SKU",
     ])
 
-    # ────── TAB 1: P&L ──────
+    # ────────────────────────── TAB 1: P&L SO SÁNH ──────────────────────────
     with tab1:
-        c_a, c_b, c_c = st.columns(3)
-        with c_a:
-            render_pnl_column(calc.pnl_at_price(bep), "🔴 Tại điểm hòa vốn")
-        with c_b:
-            render_pnl_column(calc.pnl_at_price(price_15), "🟡 Biên lợi nhuận 15%")
-        with c_c:
-            render_pnl_column(calc.pnl_at_price(price_20), "🟢 Biên lợi nhuận 20%")
+        st.markdown("##### 💼 BẢNG CÂN ĐỐI LÃI LỖ ĐA KỊCH BẢN (P&L COMPARATIVE STATEMENT)")
+        st.caption("Xem và đối soát trực tiếp các dòng chi phí giữa 3 kịch bản giá bán đề xuất.")
 
-        st.markdown("---")
-        st.subheader("🎯 Nhập giá bán tùy chỉnh")
-        custom_price = st.number_input(
-            "Giá bán tùy chỉnh (₫)", min_value=0,
-            value=int(price_15) if price_15 != float('inf') else 0,
-            step=10_000, key="custom_price",
-        )
-        if custom_price > 0:
-            pnl_c = calc.pnl_at_price(custom_price)
-            rows = [{"Khoản mục": k,
-                      "Giá trị": format_vnd(v) if "%" not in k else f"{v:.1f}%"}
-                     for k, v in pnl_c.items() if isinstance(v, (int, float))]
-            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        # Thêm phần giả lập giá tùy chọn
+        c_cust1, c_cust2 = st.columns([2, 5])
+        with c_cust1:
+            custom_input_price = st.number_input(
+                "🎯 Nhập giá bán giả định của bạn (₫):",
+                min_value=0,
+                value=int(p15) if p15 != float('inf') else 0,
+                step=10_000,
+                key="custom_price_tab1"
+            )
+        with c_cust2:
+            if custom_input_price > 0:
+                custom_pnl = calc.pnl_at_price(custom_input_price)
+                c_profit = custom_pnl["LỢI NHUẬN RÒNG"]
+                c_margin = custom_pnl["BIÊN LỢI NHUẬN (%)"]
+                badge_bg = "#DCFCE7" if c_profit >= 0 else "#FEE2E2"
+                badge_color = "#15803D" if c_profit >= 0 else "#DC2626"
+                st.markdown(f"""
+                <div style="background:{badge_bg}; border:1px solid {badge_color}; border-radius:8px; padding:10px 16px; margin-top:24px;">
+                    <span style="font-weight:700; color:{badge_color};">Kết quả giá giả định:</span>
+                    Lợi nhuận ròng: <b>{format_vnd(c_profit)}/đơn</b> &nbsp;|&nbsp; Biên lợi nhuận: <b>{c_margin:.1f}%</b>
+                </div>
+                """, unsafe_allow_html=True)
 
-    # ────── TAB 2: Staff Detail ──────
+        render_executive_pnl_table(calc, bep, p15, p20, custom_input_price)
+
+    # ────────────────────────── TAB 2: CHI TIẾT NHÂN SỰ ──────────────────────────
     with tab2:
-        st.subheader("👥 Bảng chi phí nhân sự — từng người")
-        st.caption(f"Phân bổ trên {monthly_orders} đơn / tháng")
+        st.markdown("##### 👥 CƠ CẤU CHI PHÍ LƯƠNG & HOA HỒNG TỪNG NHÂN SỰ")
+        st.caption(f"Chi phí nhân sự được chia đều dựa trên tổng sản lượng dự kiến: **{monthly_orders} đơn / tháng**.")
 
-        # Summary cards per person
-        active_staff = [m for m in staff_members if m.active]
-        if active_staff:
-            cols = st.columns(min(len(active_staff), 4))
-            for idx, member in enumerate(active_staff):
+        active_members = [m for m in staff_members if m.active]
+        if active_members:
+            # Grid of distinct staff cards
+            cols = st.columns(len(active_members) if len(active_members) <= 4 else 4)
+            for idx, m in enumerate(active_members):
                 col = cols[idx % len(cols)]
-                label = f"{member.role}"
-                if member.name:
-                    label += f"\n({member.name})"
-                per_unit = member.salary / monthly_orders if monthly_orders > 0 else 0
+                per_unit = m.salary / monthly_orders if monthly_orders > 0 else 0
+                comm_at_p15 = p15 * (m.commission_pct / 100) if p15 != float('inf') else 0
+                total_m_unit = per_unit + comm_at_p15
+
                 with col:
                     st.markdown(f"""
-                    <div style="background:{BRAND_RED_BG}; border:2px solid {BRAND_RED};
-                                border-radius:10px; padding:15px; text-align:center; margin-bottom:10px;">
-                        <div style="font-weight:700; color:{BRAND_RED_DARK}; font-size:0.9em;">
-                            {member.role}</div>
-                        <div style="color:#666; font-size:0.8em;">{member.name or '—'}</div>
-                        <hr style="margin:8px 0; border-color:{BRAND_RED_LIGHT};">
-                        <div style="font-size:0.85em;">Lương: <b>{format_vnd(member.salary)}</b></div>
-                        <div style="font-size:0.85em;">Hoa hồng: <b>{member.commission_pct:.1f}%</b></div>
-                        <hr style="margin:8px 0; border-color:{BRAND_RED_LIGHT};">
-                        <div style="font-size:0.85em;">Phân bổ/đơn: <b style="color:{BRAND_RED};">{format_vnd(per_unit)}</b></div>
+                    <div style="background:#FFFFFF; border:1.5px solid {BRAND_BORDER}; border-top:4px solid {BRAND_RED};
+                                border-radius:10px; padding:16px; margin-bottom:12px; box-shadow:0 2px 4px rgba(0,0,0,0.04);">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:800; font-size:1rem; color:{BRAND_DARK};">{m.role}</span>
+                            <span style="background:#DCFCE7; color:#15803D; font-size:0.75rem; font-weight:700; padding:2px 6px; border-radius:4px;">🟢 Đang tính</span>
+                        </div>
+                        <div style="font-size:0.88rem; font-weight:600; color:{BRAND_MUTED}; margin-top:2px;">
+                            Họ tên: <b style="color:{BRAND_DARK};">{m.name or 'Chưa nhập'}</b>
+                        </div>
+                        <div style="height:1px; background:{BRAND_BORDER}; margin:10px 0;"></div>
+                        <div style="font-size:0.85rem; color:{BRAND_DARK};">
+                            • Lương cơ bản: <b>{format_vnd(m.salary)}/th</b><br>
+                            • Hoa hồng: <b style="color:{BRAND_RED};">{m.commission_pct:.1f}% DT</b><br>
+                            • Lương chia đều: <b>{format_vnd(per_unit)}/đơn</b><br>
+                            • HH tại giá 15%: <b>{format_vnd(comm_at_p15)}/đơn</b>
+                        </div>
+                        <div style="height:1px; background:{BRAND_BORDER}; margin:10px 0;"></div>
+                        <div style="font-size:0.85rem; font-weight:700; color:{BRAND_DARK}; text-align:right;">
+                            Tổng chi / đơn: <span style="color:{BRAND_RED}; font-size:0.95rem;">{format_vnd(total_m_unit)}</span>
+                        </div>
                     </div>
                     """, unsafe_allow_html=True)
 
-            st.markdown("---")
-            st.markdown("#### 📊 Bảng tổng hợp")
-            ref_price = price_15 if price_15 != float('inf') else bep
-            render_staff_detail_table(calc, ref_price)
-
-            # Total row
-            total_salary = product.staff.total_salary()
-            total_per_unit = product.staff.fixed_cost_per_unit()
-            total_comm_pct = product.staff.total_commission_pct()
-            total_comm = product.staff.commission_per_unit(ref_price)
+            # Executive Staff Total Bar
+            tot_sal = product.staff.total_salary()
+            tot_fix_unit = product.staff.fixed_cost_per_unit()
+            tot_comm_pct = product.staff.total_commission_pct()
+            tot_comm_unit = product.staff.commission_per_unit(p15) if p15 != float('inf') else 0
 
             st.markdown(f"""
-            <div style="background:{BRAND_RED}; color:white; padding:12px 20px;
-                        border-radius:8px; display:flex; justify-content:space-between;">
-                <span><b>TỔNG LƯƠNG:</b> {format_vnd(total_salary)}/tháng</span>
-                <span><b>PHÂN BỔ/ĐƠN:</b> {format_vnd(total_per_unit)}</span>
-                <span><b>HOA HỒNG:</b> {total_comm_pct:.1f}% = {format_vnd(total_comm)}/đơn</span>
-                <span><b>TỔNG NS/ĐƠN:</b> {format_vnd(total_per_unit + total_comm)}</span>
+            <div style="background:#0F172A; color:#FFFFFF; padding:16px 24px; border-radius:10px; margin-top:10px;
+                        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                <div>
+                    <span style="font-size:0.85rem; color:#94A3B8; text-transform:uppercase; font-weight:700;">Tổng quỹ lương cứng</span><br>
+                    <span style="font-size:1.3rem; font-weight:800; color:#FFFFFF;">{format_vnd(tot_sal)} / tháng</span>
+                </div>
+                <div>
+                    <span style="font-size:0.85rem; color:#94A3B8; text-transform:uppercase; font-weight:700;">Lương cứng / Đơn</span><br>
+                    <span style="font-size:1.3rem; font-weight:800; color:#F87171;">{format_vnd(tot_fix_unit)}</span>
+                </div>
+                <div>
+                    <span style="font-size:0.85rem; color:#94A3B8; text-transform:uppercase; font-weight:700;">Tổng % Hoa hồng</span><br>
+                    <span style="font-size:1.3rem; font-weight:800; color:#38BDF8;">{tot_comm_pct:.1f}% ({format_vnd(tot_comm_unit)}/đơn)</span>
+                </div>
+                <div>
+                    <span style="font-size:0.85rem; color:#94A3B8; text-transform:uppercase; font-weight:700;">Tổng chi phí nhân sự / đơn</span><br>
+                    <span style="font-size:1.4rem; font-weight:900; color:#4ADE80;">{format_vnd(tot_fix_unit + tot_comm_unit)}</span>
+                </div>
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.info("Chưa có nhân viên nào được kích hoạt. Hãy bật ở sidebar.")
+            st.info("Chưa có nhân sự nào được tích chọn kích hoạt ở thanh bên trái.")
 
-        # Staff cost as % of revenue
-        st.markdown("---")
-        st.subheader("📊 Tỷ trọng chi phí nhân sự trong giá bán")
-        if price_15 != float('inf') and active_staff:
-            staff_total_per_unit = total_per_unit + total_comm
-            other_cost = calc._total_fixed_cost() - product.staff.fixed_cost_per_unit()
-
-            fig_staff = go.Figure(go.Pie(
-                labels=["Nhân sự (lương+HH)", "Chi phí khác", "Lợi nhuận"],
-                values=[staff_total_per_unit, other_cost, price_15 * 15 / 100],
-                marker=dict(colors=[BRAND_RED, "#FFB3BA", "#2ecc71"]),
-                hole=0.5,
-            ))
-            fig_staff.update_layout(
-                title="Cơ cấu giá bán (Biên 15%)",
-                height=350, paper_bgcolor="#FFFFFF",
-            )
-            st.plotly_chart(fig_staff, use_container_width=True)
-
-    # ────── TAB 3: Charts ──────
+    # ────────────────────────── TAB 3: BIỂU ĐỒ TRỰC QUAN ──────────────────────────
     with tab3:
-        ch1, ch2 = st.columns(2)
-        with ch1:
-            render_pnl_waterfall(calc.pnl_at_price(price_15),
-                                  f"Waterfall P&L — Biên 15% ({format_vnd(price_15)})")
-        with ch2:
-            render_cost_pie(calc.pnl_at_price(price_15))
+        st.markdown("##### 📊 MÔ HÌNH HÓA DÒNG TIỀN & BIÊN LỢI NHUẬN")
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            render_pnl_waterfall(calc.pnl_at_price(p15), f"Biểu đồ Thác Nước P&L tại Giá 15% ({format_vnd(p15)})")
+        with col_g2:
+            render_cost_pie(calc.pnl_at_price(p15))
+
         render_margin_curve(calc, bep)
 
-    # ────── TAB 4: Sensitivity ──────
+    # ────────────────────────── TAB 4: ĐỘ NHẠY LỢI NHUẬN ──────────────────────────
     with tab4:
-        st.subheader("🔍 Phân tích độ nhạy giá bán")
-
+        st.markdown("##### 🔍 PHÂN TÍCH ĐỘ NHẠY VÀ KỊCH BẢN RỦI RO")
+        
         if bep != float('inf') and bep > 0:
+            st.markdown("###### 1. Bảng nhạy cảm: Giá bán thị trường tác động đến Lãi/Lỗ")
             step = max(10_000, round(bep * 0.05 / 10_000) * 10_000)
-            price_range = [p for p in [bep + step * i for i in range(-5, 11)] if p > 0]
+            price_range = [p for p in [bep + step * i for i in range(-4, 10)] if p > 0]
 
-            rows = []
+            rows_sen = []
             for p in price_range:
                 pnl = calc.pnl_at_price(p)
                 profit = pnl['LỢI NHUẬN RÒNG']
-                rows.append({
-                    "Giá bán (₫)": f"{p:,.0f}",
-                    "Tổng CP (₫)": f"{pnl['TỔNG CHI PHÍ']:,.0f}",
-                    "LN ròng (₫)": f"{profit:,.0f}",
-                    "Biên LN (%)": f"{pnl['BIÊN LỢI NHUẬN (%)']:.1f}%",
-                    "": "🟢 Lãi" if profit > 0 else "🔴 Lỗ" if profit < 0 else "🟡 Hòa vốn",
+                margin = pnl['BIÊN LỢI NHUẬN (%)']
+                status = "🟢 Lãi tốt" if margin >= 15 else "🟡 Lãi mỏng" if profit > 0 else "🔴 Lỗ vốn"
+                rows_sen.append({
+                    "Giá bán thị trường (₫)": f"{p:,.0f}",
+                    "Tổng chi phí / đơn (₫)": f"{pnl['TỔNG CHI PHÍ']:,.0f}",
+                    "Lợi nhuận ròng / đơn (₫)": f"{profit:,.0f}",
+                    "Biên lợi nhuận ròng (%)": f"{margin:.1f}%",
+                    "Đánh giá rủi ro": status,
                 })
-            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(rows_sen), use_container_width=True, hide_index=True)
 
-            # Sensitivity on breakage
             st.markdown("---")
-            st.subheader("📉 Tác động tỷ lệ hàng hỏng")
-            br_rows = []
-            for br in [0, 1, 2, 3, 5, 7, 10, 15]:
-                tmp = ProductInput(
-                    sku=sku, product_name=product_name, cogs=cogs,
-                    packaging=product.packaging, breakage_rate_pct=br,
-                    ads_livestream=product.ads_livestream,
-                    ads_page=product.ads_page, staff=product.staff,
-                    premises=product.premises, shipping=product.shipping,
-                    warranty=product.warranty, contingency=product.contingency,
-                )
-                tmp_pnl = PricingCalculator(tmp).pnl_at_price(price_15)
-                br_rows.append({
-                    "Tỷ lệ hỏng": f"{br}%",
-                    "CP hỏng / đơn": f"{cogs * br / 100:,.0f}",
-                    "LN ròng": f"{tmp_pnl['LỢI NHUẬN RÒNG']:,.0f}",
-                    "Biên LN": f"{tmp_pnl['BIÊN LỢI NHUẬN (%)']:.1f}%",
-                })
-            st.dataframe(pd.DataFrame(br_rows), use_container_width=True, hide_index=True)
+            c_sen1, c_sen2 = st.columns(2)
+            with c_sen1:
+                st.markdown("###### 2. Tác động của Tỷ lệ Hỏng / Vỡ kính cường lực")
+                st.caption(f"Khảo sát tại mức giá đề xuất {format_vnd(p15)} (Biên 15%)")
+                br_rows = []
+                for br in [1, 2, 3, 5, 7, 10, 15]:
+                    tmp = ProductInput(
+                        sku=sku, product_name=product_name, cogs=cogs,
+                        packaging=product.packaging, breakage_rate_pct=br,
+                        ads_livestream=product.ads_livestream,
+                        ads_page=product.ads_page, staff=product.staff,
+                        premises=product.premises, shipping=product.shipping,
+                        warranty=product.warranty, contingency=product.contingency,
+                    )
+                    tmp_pnl = PricingCalculator(tmp).pnl_at_price(p15)
+                    br_rows.append({
+                        "Tỷ lệ vỡ kính": f"{br}%",
+                        "Phí hỏng/đơn (₫)": f"{cogs * br / 100:,.0f}",
+                        "Lãi ròng/đơn (₫)": f"{tmp_pnl['LỢI NHUẬN RÒNG']:,.0f}",
+                        "Biên ròng (%)": f"{tmp_pnl['BIÊN LỢI NHUẬN (%)']:.1f}%",
+                    })
+                st.dataframe(pd.DataFrame(br_rows), use_container_width=True, hide_index=True)
 
-            # Sensitivity on monthly orders
-            st.markdown("---")
-            st.subheader("📦 Tác động số đơn / tháng")
-            ord_rows = []
-            for mo in [50, 100, 150, 200, 300, 500, 800, 1000]:
-                tmp = ProductInput(
-                    sku=sku, product_name=product_name, cogs=cogs,
-                    packaging=product.packaging, breakage_rate_pct=breakage,
-                    ads_livestream=product.ads_livestream,
-                    ads_page=product.ads_page,
-                    staff=StaffTeam(members=staff_members, estimated_monthly_orders=mo),
-                    premises=PremisesCost(warehouse, showroom, office, utilities, mo),
-                    shipping=product.shipping, warranty=product.warranty,
-                    contingency=ContingencyCost(contingency, mo),
-                )
-                tc = PricingCalculator(tmp)
-                t_bep = tc.breakeven_price()
-                tmp_pnl = tc.pnl_at_price(price_15)
-                ord_rows.append({
-                    "Đơn / tháng": f"{mo:,}",
-                    "BEP": format_vnd(t_bep),
-                    "LN ròng": f"{tmp_pnl['LỢI NHUẬN RÒNG']:,.0f}",
-                    "Biên LN": f"{tmp_pnl['BIÊN LỢI NHUẬN (%)']:.1f}%",
-                })
-            st.dataframe(pd.DataFrame(ord_rows), use_container_width=True, hide_index=True)
-        else:
-            st.warning("Không thể tính BEP — hãy kiểm tra thông số đầu vào.")
+            with c_sen2:
+                st.markdown("###### 3. Hiệu ứng quy mô: Sản lượng bán / tháng")
+                st.caption(f"Khi scale đơn hàng, chi phí cố định (lương, mặt bằng...) giảm mạnh")
+                scale_rows = []
+                for mo in [100, 200, 300, 500, 800, 1000]:
+                    tmp = ProductInput(
+                        sku=sku, product_name=product_name, cogs=cogs,
+                        packaging=product.packaging, breakage_rate_pct=breakage,
+                        ads_livestream=product.ads_livestream, ads_page=product.ads_page,
+                        staff=StaffTeam(members=staff_members, estimated_monthly_orders=mo),
+                        premises=PremisesCost(warehouse, showroom, office, utilities, mo),
+                        shipping=product.shipping, warranty=product.warranty,
+                        contingency=ContingencyCost(contingency, mo),
+                    )
+                    tc = PricingCalculator(tmp)
+                    t_bep = tc.breakeven_price()
+                    scale_rows.append({
+                        "Sản lượng (đơn/tháng)": f"{mo:,}",
+                        "Điểm hòa vốn (₫)": format_vnd(t_bep),
+                        "Giá bán đạt 15% (₫)": format_vnd(tc.price_for_margin(15)),
+                        "Giá bán đạt 20% (₫)": format_vnd(tc.price_for_margin(20)),
+                    })
+                st.dataframe(pd.DataFrame(scale_rows), use_container_width=True, hide_index=True)
 
-    # ────── TAB 5: Multi-SKU ──────
+    # ────────────────────────── TAB 5: ĐA SKU ──────────────────────────
     with tab5:
-        st.subheader("📤 So sánh nhanh các SKU mẫu")
+        st.markdown("##### 📤 MA TRẬN ĐỊNH GIÁ TOÀN BỘ DANH MỤC SẢN PHẨM MẪU")
+        st.caption("Áp dụng đồng bộ cấu trúc chi phí vận hành, marketing và nhân sự cho từng mã hàng:")
+
         multi_rows = []
         for name, pd_ in SAMPLE_PRODUCTS.items():
             if "Nhập tùy chỉnh" in name:
@@ -898,25 +1025,22 @@ def main():
             t_15 = tc.price_for_margin(15)
             t_20 = tc.price_for_margin(20)
             multi_rows.append({
-                "SKU": tmp.sku,
-                "Sản phẩm": tmp.product_name,
-                "COGS": f"{pd_['cogs']:,.0f}",
-                "BEP": format_vnd(t_bep),
-                "Giá 15%": format_vnd(t_15),
-                "Giá 20%": format_vnd(t_20),
-                "LN/đơn @20%": format_vnd(t_20 * 20 / 100) if t_20 != float('inf') else "N/A",
+                "Mã SKU": tmp.sku,
+                "Dòng sản phẩm": tmp.product_name,
+                "Giá nhập (COGS)": f"{pd_['cogs']:,.0f} ₫",
+                "Điểm hòa vốn (BEP)": format_vnd(t_bep),
+                "Giá đề xuất (Biên 15%)": format_vnd(t_15),
+                "Giá đề xuất (Biên 20%)": format_vnd(t_20),
+                "Lãi ròng / đơn (@20%)": format_vnd(t_20 * 0.2) if t_20 != float('inf') else "N/A",
             })
         st.dataframe(pd.DataFrame(multi_rows), use_container_width=True, hide_index=True)
 
-    # ── Footer ──
+    # ── Executive Footer ──
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, {BRAND_RED} 0%, {BRAND_RED_DARK} 100%);
-                padding: 14px 24px; border-radius: 10px; margin-top: 32px;
-                text-align:center;">
-        <span style="color:#FFFFFF; font-size:0.85em;">
-            🔥 Pricing Engine v3.0 &nbsp;·&nbsp; {datetime.now().strftime('%d/%m/%Y %H:%M')}
-            &nbsp;·&nbsp; Dành cho nội bộ Công ty Gia dụng
-        </span>
+    <div style="background:#0F172A; border-radius:10px; padding:14px 20px; margin-top:35px;
+                display:flex; justify-content:space-between; align-items:center; color:#94A3B8; font-size:0.85rem;">
+        <div>🔥 <b>Pricing Engine Executive Suite v3.2</b> · Thiết kế chuẩn thẩm mỹ cao cấp</div>
+        <div>Lưu hành nội bộ Ban Giám Đốc Công ty Gia Dụng</div>
     </div>
     """, unsafe_allow_html=True)
 
